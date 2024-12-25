@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from tkinter import Canvas, Tk
+from typing import Optional
 
 
 class Point:
@@ -56,7 +58,7 @@ class Cell:
         x2: float,
         y1: float,
         y2: float,
-        window: Window,
+        window: Optional[Window] = None,
         has_left_wall: bool = True,
         has_right_wall: bool = True,
         has_top_wall: bool = True,
@@ -66,27 +68,43 @@ class Cell:
         self._x2: float = x2
         self._y1: float = y1
         self._y2: float = y2
-        self._win: Window = window
+        self._win: Optional[Window] = window
         self.has_left_wall: bool = has_left_wall
         self.has_right_wall: bool = has_right_wall
         self.has_top_wall: bool = has_top_wall
         self.has_bottom_wall: bool = has_bottom_wall
 
     def draw(self, fill_color: str = "white"):
+        if not self._win:
+            raise Exception("Cannot draw with no window provided in a Cell")
+
+        left: Line = Line(Point(self._x1, self._y1), Point(self._x1, self._y2))
+        right: Line = Line(Point(self._x2, self._y1), Point(self._x2, self._y2))
+        bottom: Line = Line(Point(self._x1, self._y2), Point(self._x2, self._y2))
+        top: Line = Line(Point(self._x1, self._y1), Point(self._x2, self._y1))
+
+        default_bg = self._win.canvas.cget("bg")
+
         if self.has_left_wall:
-            left: Line = Line(Point(self._x1, self._y1), Point(self._x1, self._y2))
             left.draw(self._win.canvas, fill_color)
+        else:
+            left.draw(self._win.canvas, default_bg)
         if self.has_right_wall:
-            right: Line = Line(Point(self._x2, self._y1), Point(self._x2, self._y2))
             right.draw(self._win.canvas, fill_color)
+        else:
+            right.draw(self._win.canvas, default_bg)
         if self.has_bottom_wall:
-            bottom: Line = Line(Point(self._x1, self._y2), Point(self._x2, self._y2))
             bottom.draw(self._win.canvas, fill_color)
+        else:
+            bottom.draw(self._win.canvas, default_bg)
         if self.has_top_wall:
-            top: Line = Line(Point(self._x1, self._y1), Point(self._x2, self._y1))
             top.draw(self._win.canvas, fill_color)
+        else:
+            top.draw(self._win.canvas, default_bg)
 
     def draw_move(self, to_cell: Cell, undo=False):
+        if not self._win:
+            raise Exception("Can't draw with no window provided in a cell")
         color: str = "red"
         if undo:
             color = "gray"
