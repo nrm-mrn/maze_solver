@@ -1,4 +1,4 @@
-/.maze_solver
-/__pycache__
-/.DS_Store
+.maze_solver/
+__pycache__/
+.DS_Store/
 

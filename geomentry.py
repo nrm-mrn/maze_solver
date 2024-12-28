@@ -73,6 +73,7 @@ class Cell:
         self.has_right_wall: bool = has_right_wall
         self.has_top_wall: bool = has_top_wall
         self.has_bottom_wall: bool = has_bottom_wall
+        self.visited = False
 
     def draw(self, fill_color: str = "white"):
         if not self._win:
